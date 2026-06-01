@@ -1,0 +1,91 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam backgroundColor #1e1e1e
+skinparam component {
+    BackgroundColor #2b2b2b
+    BorderColor white
+    FontColor white
+}
+skinparam interface {
+    BackgroundColor #2b2b2b
+    BorderColor white
+    FontColor white
+}
+skinparam ArrowColor white
+
+title Diagrama de Componentes - Sistema de Monitoramento e IA
+
+package "Coleta de Dados" {
+
+    component "Endpoints API" as API {
+        [URL_ALARMES]
+        [URL_UNIDADES]
+        [URL_TELEMETRIA]
+    }
+
+    component "Processador de Endpoints" as PROCESSADOR {
+        [processar_unidades()]
+        [processar_alarmes()]
+        [processar_telemetria()]
+        [buscar_dispositivos()]
+    }
+
+    API --> PROCESSADOR
+}
+
+package "Camada de Domínio" {
+
+    component "Módulo Unidade" as UNIDADE
+    component "Módulo Dispositivo" as DISPOSITIVO
+    component "Módulo Telemetria" as TELEMETRIA
+    component "Módulo Alarmes" as ALARME
+
+    PROCESSADOR --> UNIDADE
+    PROCESSADOR --> DISPOSITIVO
+    PROCESSADOR --> TELEMETRIA
+    PROCESSADOR --> ALARME
+
+    DISPOSITIVO --> TELEMETRIA
+    DISPOSITIVO --> ALARME
+}
+
+package "Persistência" {
+
+    database "PostgreSQL" as DB {
+        [Banco de Dados]
+    }
+
+    component "Gerenciador DB" as GERENCIADOR_DB {
+        [conectar()]
+        [criar_tabelas()]
+    }
+
+    GERENCIADOR_DB --> DB
+
+    UNIDADE --> GERENCIADOR_DB
+    DISPOSITIVO --> GERENCIADOR_DB
+    TELEMETRIA --> GERENCIADOR_DB
+    ALARME --> GERENCIADOR_DB
+}
+
+package "Automação e IA" {
+
+    component "N8N Workflow" as N8N {
+        [receberMensagem()]
+        [enviarMensagem()]
+        [consultarBanco()]
+        [processarIA()]
+    }
+
+    component "AI Agent" as AI {
+        [GPT-4.1-mini]
+        [BufferWindowMemory]
+        [PostgresTool]
+    }
+
+    N8N --> AI
+    N8N --> GERENCIADOR_DB
+    ALARME --> N8N
+}
+
+@enduml
