@@ -95,8 +95,8 @@ SELECT
 FROM dispositivos;
 ________________________________________
 N8N:
-- O script deve ser executado a cada 5 minutos para manter o banco atualizado.
-Opção 1 — N8N (recomendado)
-Configure um fluxo no N8N com trigger de tempo (a cada 5 minutos) que executa o script Python.
+Workflow 1 — Envio de Notificações de Alarmes:
+Recebe dados de um alarme via webhook, organiza as informações e utiliza IA para gerar uma mensagem clara e profissional sobre o problema detectado. Em seguida, envia o alerta automaticamente pelo WhatsApp para o responsável.
 
-
+Workflow 2 — Chatbot:
+Recebe mensagens do WhatsApp, mantém o contexto da conversa e utiliza IA integrada ao PostgreSQL para consultar dados de alarmes, telemetria e dispositivos. Responde automaticamente às perguntas dos usuários com base nos dados reais do sistema.
