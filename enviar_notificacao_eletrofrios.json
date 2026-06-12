@@ -1,0 +1,259 @@
+{
+  "name": "enviar_notificacao_eletrofrios",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bdc18f6a-12d1-45ec-a840-90c9f859d2ca",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1e824914-f5e6-4af3-bf99-9d1a5dd9a3be",
+      "name": "Webhook",
+      "webhookId": "bdc18f6a-12d1-45ec-a840-90c9f859d2ca"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4457969f-16ab-4d4b-b744-e2be511f4219",
+              "name": "alarme_id",
+              "value": "={{ $json.body.alarme_id }}",
+              "type": "number"
+            },
+            {
+              "id": "e531f4bd-b573-4764-8b0e-f308faca4d05",
+              "name": "loja_nome",
+              "value": "={{ $json.body.loja_nm }}",
+              "type": "string"
+            },
+            {
+              "id": "cd42b2b4-515d-4113-bae5-c8520afa1e5c",
+              "name": "dispositivo_nome",
+              "value": "={{ $json.body.dispositivo_nm }}",
+              "type": "string"
+            },
+            {
+              "id": "a42129bf-8056-4ee5-9e1a-e7eb202afadd",
+              "name": "alarme_descricao",
+              "value": "={{ $json.body.alarme_desc }}",
+              "type": "string"
+            },
+            {
+              "id": "2e3e3b44-5e27-47e9-8a73-ca42db972c78",
+              "name": "criticidade",
+              "value": "={{ $json.body.criticidade }}",
+              "type": "string"
+            },
+            {
+              "id": "5d7d271e-daff-4135-8b03-492f33c87d81",
+              "name": "tempo",
+              "value": "={{ $json.body.tempo }}",
+              "type": "string"
+            },
+            {
+              "id": "c63b5363-2076-4585-bd97-2cd98d3181df",
+              "name": "alarme_dh_cad",
+              "value": "={{ $json.body.alarme_dh_cad }}",
+              "type": "string"
+            },
+            {
+              "id": "a5f91f6c-46ec-45a3-ac23-87e8996ee747",
+              "name": "grupo_nome",
+              "value": "={{ $json.body.grupo_nm }}",
+              "type": "string"
+            },
+            {
+              "id": "c9984400-ccf4-432f-8072-1a6b3f2d77f3",
+              "name": "subgrupo_nome",
+              "value": "={{ $json.body.subgrupo_nm }}",
+              "type": "string"
+            },
+            {
+              "id": "892b3df9-8e80-4581-a361-96823785f492",
+              "name": "telefone",
+              "value": "={{ $json.body.telefone }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "5abfbde5-983e-48ee-a1b4-94c55b6adb76",
+      "name": "filtrando_campos"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "=eletrofrios",
+        "remoteJid": "=5541997883547",
+        "messageText": "={{ $json.output }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        800,
+        0
+      ],
+      "id": "15537f07-4c1e-4984-862f-1a2420b5ab93",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "f3nekOY6lB3534lK",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=alarme_id: {{ $json.alarme_id }}\nloja_nome: {{ $json.loja_nome }}\ndispositivo_nome: {{ $json.dispositivo_nome }}\ncriticidade: {{ $json.criticidade }}\ntempo: {{ $json.tempo }}\nalarme_dh_cad: {{ $json.alarme_dh_cad }}\ngrupo_nome: {{ $json.grupo_nome }}\nsubgrupo_nome: {{ $json.subgrupo_nome }}\ntelefone: {{ $json.telefone }}",
+        "options": {
+          "systemMessage": "=Você é um assistente especializado em monitoramento de equipamentos e gestão de alarmes.\n\nSua tarefa é gerar uma mensagem profissional, objetiva e fácil de entender para o responsável pela empresa com base nos dados recebidos.\n\nDados do alarme:\n\n* ID do Alarme: {{ $json.alarme_id }}\n* Loja: {{ $json.loja_nome }}\n* Dispositivo: {{ $json.dispositivo_nome }}\n* Criticidade: {{ $json.criticidade }}\n* Tempo de ocorrência: {{ $json.tempo }}\n* Data/Hora do cadastro: {{ $json.alarme_dh_cad }}\n* Grupo: {{ $json.grupo_nome }}\n* Subgrupo: {{ $json.subgrupo_nome }}\n\nRegras:\n\n1. Informe claramente qual é o problema identificado.\n2. Destaque o nível de criticidade utilizando linguagem adequada.\n3. Informe o local e o equipamento afetado.\n4. Mencione há quanto tempo o alarme está ativo.\n5. Ao final, gere uma seção chamada \"Sugestão de Ação\" contendo recomendações práticas para o responsável.\n6. Caso a criticidade seja \"Alta\" ou \"Crítica\", enfatize a necessidade de atendimento imediato.\n7. A mensagem deve ser curta, profissional e adequada para envio por WhatsApp.\n\nFormato esperado:\n\n🚨 ALERTA DE MONITORAMENTO\n\nLoja: [nome da loja]\nDispositivo: [nome do dispositivo]\nCriticidade: [criticidade]\nGrupo: [grupo]\nSubgrupo: [subgrupo]\nTempo em alarme: [tempo]\nData/Hora: [data]\n\nDescrição:\n[Resumo claro do problema detectado.]\n\nSugestão de Ação:\n• [ação 1]\n• [ação 2]\n• [ação 3]\n\nID do Alarme: [id]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "797cc8ff-c916-40d2-836a-6b6da182d5f5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        528,
+        224
+      ],
+      "id": "992d2867-e1b9-4736-b260-1367c3208e15",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "n076U96xF4oaNaaw",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "connection": "upgrade",
+            "host": "n8n.fajatech.com.br",
+            "x-real-ip": "177.30.181.72",
+            "x-forwarded-for": "177.30.181.72",
+            "x-forwarded-proto": "https",
+            "content-length": "318",
+            "user-agent": "python-requests/2.32.4",
+            "accept-encoding": "gzip, deflate",
+            "accept": "*/*",
+            "content-type": "application/json"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "alarme_id": 4266471,
+            "loja_nm": "Indaiatuba - SP",
+            "dispositivo_nm": "8 - MTA-3L - CONFEITARIA CLIM.",
+            "alarme_desc": "Alarme de baixa temperatura [Médio]",
+            "criticidade": "M",
+            "tempo": "9m",
+            "alarme_dh_cad": "2026-06-01 23:31:03",
+            "grupo_nm": "Ambiente",
+            "subgrupo_nm": "Ambiente Resfriados",
+            "telefone": null
+          },
+          "webhookUrl": "https://n8n.fajatech.com.br/webhook/bdc18f6a-12d1-45ec-a840-90c9f859d2ca",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "filtrando_campos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filtrando_campos": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "e515f997-636e-4d46-86e1-bb09f51a9011",
+  "meta": {
+    "instanceId": "236919f86f1421d2203512f0bf4ed09509afcd390a5cf1f188ed1f9b8ccdd448"
+  },
+  "id": "IDmEiUeHPhHM3zrh",
+  "tags": []
+}
