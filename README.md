@@ -95,6 +95,7 @@ SELECT
 FROM dispositivos;
 ________________________________________
 N8N:
+
 Workflow 1 — Envio de Notificações de Alarmes:
 Recebe dados de um alarme via webhook, organiza as informações e utiliza IA para gerar uma mensagem clara e profissional sobre o problema detectado. Em seguida, envia o alerta automaticamente pelo WhatsApp para o responsável.
 
