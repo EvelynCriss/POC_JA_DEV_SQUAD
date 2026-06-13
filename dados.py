@@ -3,9 +3,8 @@ import psycopg2
 from psycopg2.extras import execute_values
 from datetime import datetime, timedelta
 
-# =============================================
-# CONFIGURAÇÕES
-# =============================================
+# CONFIGURAÇÕES DB
+
 DB_CONFIG = {
     "host":     "localhost",
     "port":     5433,
@@ -19,17 +18,15 @@ URL_UNIDADES   = "https://credenciamento.eletrofrio.com.br:5900/galileo/api/api_
 URL_TELEMETRIA = "https://credenciamento.eletrofrio.com.br:5900/galileo/api/api_hackathon?route=telemetria&dispositivoId={dispositivo_id}"
 WEBHOOK_N8N    = "https://n8n.fajatech.com.br/webhook/bdc18f6a-12d1-45ec-a840-90c9f859d2ca"
 
-# =============================================
 # CONEXÃO COM POSTGRESQL
-# =============================================
+
 def conectar():
     conn = psycopg2.connect(**DB_CONFIG)
     print("Conectado ao PostgreSQL com sucesso.")
     return conn
 
-# =============================================
 # CRIAR TABELAS
-# =============================================
+
 def criar_tabelas(conn):
     with conn.cursor() as cur:
         cur.execute("""
@@ -105,9 +102,8 @@ def criar_tabelas(conn):
         conn.commit()
     print("Tabelas criadas/verificadas com sucesso.")
 
-# =============================================
 # FUNÇÕES DE TRATAMENTO
-# =============================================
+
 def texto_ou_nulo(valor):
     if valor is None:
         return None
@@ -161,9 +157,8 @@ def timestamps_dos_labels(labels, qtd_valores):
             )
     return timestamps
 
-# =============================================
 # PROCESSAR UNIDADES
-# =============================================
+
 def processar_unidades(conn):
     print("\nColetando unidades...")
     resp = requests.get(URL_UNIDADES, timeout=30)
@@ -209,9 +204,9 @@ def processar_unidades(conn):
         conn.commit()
     print(f"{len(registros)} unidades salvas no banco.")
 
-# =============================================
+
 # PROCESSAR ALARMES + ACUMULAR DISPOSITIVOS
-# =============================================
+
 def processar_alarmes(conn):
     print("\nColetando alarmes...")
     resp = requests.get(URL_ALARMES, timeout=30)
@@ -295,9 +290,9 @@ def processar_alarmes(conn):
     print(f"{len(registros_alarmes)} alarmes salvos.")
     print(f"{len(registros_dispositivos)} dispositivos únicos acumulados.")
 
-# =============================================
+
 # BUSCAR IDs ACUMULADOS DE DISPOSITIVOS
-# =============================================
+
 def buscar_dispositivos(conn):
     with conn.cursor() as cur:
         cur.execute("SELECT dispositivo_id FROM dispositivos ORDER BY dispositivo_id;")
@@ -305,9 +300,8 @@ def buscar_dispositivos(conn):
     print(f"\n{len(ids)} dispositivos conhecidos para coletar telemetria.")
     return ids
 
-# =============================================
 # PROCESSAR TELEMETRIA
-# =============================================
+
 def processar_telemetria(conn):
     dispositivos_ids = buscar_dispositivos(conn)
 
@@ -364,9 +358,8 @@ def processar_telemetria(conn):
 
     print(f"\nTotal de leituras salvas: {total_salvo}")
 
-# =============================================
 # VERIFICAR E ENVIAR ALARMES PARA O N8N
-# =============================================
+
 def verificar_e_enviar_alarmes(conn):
     print("\nVerificando alarmes não notificados...")
 
@@ -432,9 +425,8 @@ def verificar_e_enviar_alarmes(conn):
         except Exception as e:
             print(f"  ✗ Erro ao enviar alarme {alarme_id}: {e}")
 
-# =============================================
 # MAIN
-# =============================================
+
 if __name__ == "__main__":
     conn = conectar()
     try:
